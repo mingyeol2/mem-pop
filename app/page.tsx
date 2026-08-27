@@ -81,22 +81,22 @@ export default function Page() {
           const errorType = !json.success ? json.error : 'SERVER_ERROR';
 
           if (errorType === 'INVALID_INPUT') {
-            // PRD 5.5: AI 가드레일 예외 처리
+            // PRD 5.5: AI 가드레일 예외 처리 (올바른 단어 입력 안내)
             setErrorState({
               errorType: 'INVALID_INPUT',
-              message: '올바른 단어 또는 개념을 입력해 주세요. (예: 역사적 사건, 영단어, 전문 용어)',
+              message: json.message || '올바른 단어 또는 개념을 입력해 주세요. (예: 역사적 사건, 영단어, 전문 용어)',
             });
           } else if (errorType === 'PARSE_ERROR') {
-            // PRD 5.6: JSON 파싱 예외 처리
+            // JSON 파싱 예외 처리
             setErrorState({
               errorType: 'PARSE_ERROR',
-              message: '결과를 생성하는 중 형식이 맞지 않아 실패했습니다. 다시 생성하기를 눌러주세요.',
+              message: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
             });
           } else {
-            // PRD 5.3: 서버 에러
+            // 서버 에러
             setErrorState({
               errorType: 'SERVER_ERROR',
-              message: '일시적인 오류로 인해 암기법 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+              message: json.message || '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
             });
           }
           return;
@@ -106,16 +106,16 @@ export default function Page() {
         setContent(json.data);
       } catch (err: unknown) {
         if (err instanceof TimeoutError) {
-          // PRD 5.4: 타임아웃 예외 처리
+          // 타임아웃 예외 처리
           setErrorState({
             errorType: 'TIMEOUT',
             message: '요청 시간이 초과되었습니다. 다시 시도해 주세요.',
           });
         } else {
-          // PRD 5.3: 네트워크 오류 최종 실패
+          // 네트워크 오류 최종 실패
           setErrorState({
             errorType: 'NETWORK_ERROR',
-            message: '일시적인 오류로 인해 암기법 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+            message: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
           });
         }
       } finally {

@@ -10,11 +10,11 @@ export const maxDuration = 60;
 
 async function callGeminiAPI(keyword: string, apiKey: string): Promise<string> {
   const models = [
-    'gemini-3.5-flash-lite',
     'gemini-3.5-flash',
+    'gemini-3.5-flash-lite',
+    'gemini-3.7-flash',
     'gemini-3.1-flash-lite',
     'gemini-flash-lite-latest',
-    'gemini-3.7-flash',
   ];
   let lastError: any = null;
 
@@ -41,6 +41,28 @@ async function callGeminiAPI(keyword: string, apiKey: string): Promise<string> {
               responseMimeType: 'application/json',
               temperature: 0.7,
             },
+            safetySettings: [
+              {
+                category: 'HARM_CATEGORY_HARASSMENT',
+                threshold: 'BLOCK_NONE',
+              },
+              {
+                category: 'HARM_CATEGORY_HATE_SPEECH',
+                threshold: 'BLOCK_NONE',
+              },
+              {
+                category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT',
+                threshold: 'BLOCK_NONE',
+              },
+              {
+                category: 'HARM_CATEGORY_DANGEROUS_CONTENT',
+                threshold: 'BLOCK_NONE',
+              },
+              {
+                category: 'HARM_CATEGORY_CIVIC_INTEGRITY',
+                threshold: 'BLOCK_NONE',
+              },
+            ],
           }),
         }
       );
@@ -53,11 +75,26 @@ async function callGeminiAPI(keyword: string, apiKey: string): Promise<string> {
       }
 
       const data = await response.json();
+
+      // 안전 필터 또는 차단 단어로 인해 출력이 차단된 경우 명확한 INVALID_INPUT 처리
+      if (
+        data?.promptFeedback?.blockReason ||
+        data?.candidates?.[0]?.finishReason === 'SAFETY' ||
+        data?.candidates?.[0]?.finishReason === 'BLOCKLIST' ||
+        data?.candidates?.[0]?.finishReason === 'PROHIBITED_CONTENT'
+      ) {
+        console.warn(`Gemini safety filter triggered for keyword "${keyword}"`);
+        throw new Error('INVALID_INPUT');
+      }
+
       const generatedText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
       if (generatedText) {
         return generatedText;
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (err?.message === 'INVALID_INPUT') {
+        throw err;
+      }
       console.warn(`Network error calling Gemini model ${model}:`, err);
       lastError = err;
     }
@@ -127,7 +164,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<GenerateRespo
         {
           success: false,
           error: aiError?.message === 'PARSE_ERROR' ? 'PARSE_ERROR' : 'SERVER_ERROR',
-          message: '일시적인 오류로 인해 암기법 생성에 실패했습니다. 다시 시도해 주세요.',
+          message: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
         },
         { status: 500 }
       );
@@ -138,7 +175,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<GenerateRespo
       {
         success: false,
         error: 'SERVER_ERROR',
-        message: '일시적인 오류로 인해 암기법 생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
+        message: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
       },
       { status: 500 }
     );
