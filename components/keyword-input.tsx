@@ -76,20 +76,20 @@ export const KeywordInput: React.FC<KeywordInputProps> = ({
 
   return (
     <section
-      className="w-full rounded-3xl border border-border/80 bg-card/90 p-5 shadow-xl shadow-primary/5 backdrop-blur-sm sm:p-7"
+      className="w-full rounded-3xl border-[3px] border-[#1A1C1E] bg-white p-5 card-shadow-lg sm:p-7"
       aria-label="암기 키워드 입력"
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2.5">
         <div
-          className={`relative flex items-center rounded-2xl border bg-background px-4 py-1 transition-all duration-200 ${
+          className={`relative flex items-center rounded-2xl border-[3px] bg-[#FFF8EF] px-4 py-1.5 transition-all duration-150 ${
             showEmptyError
-              ? 'border-destructive ring-4 ring-destructive/10'
+              ? 'border-[#FF5252] shadow-[4px_4px_0_0_#FF5252]'
               : isMultiple
-              ? 'border-amber-500 ring-4 ring-amber-500/10'
-              : 'border-input focus-within:border-primary focus-within:ring-4 focus-within:ring-primary/10'
+              ? 'border-amber-500 shadow-[4px_4px_0_0_#F59E0B]'
+              : 'border-[#1A1C1E] shadow-[4px_4px_0_0_#1A1C1E] focus-within:shadow-[6px_6px_0_0_#1A1C1E] focus-within:translate-x-[-1px] focus-within:translate-y-[-1px]'
           }`}
         >
-          <Search className="mr-2.5 size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+          <Search className="mr-2.5 size-5 shrink-0 text-[#1A1C1E]" aria-hidden="true" />
           <input
             ref={inputRef}
             type="text"
@@ -99,12 +99,12 @@ export const KeywordInput: React.FC<KeywordInputProps> = ({
             onBlur={onBlur}
             onKeyDown={handleKeyDown}
             placeholder="외우고 싶은 단어, 개념, 연도를 1개만 입력하세요. 예: 임진왜란 1592, mitigate"
-            className="min-w-0 flex-1 bg-transparent py-3.5 text-sm font-medium outline-none placeholder:text-muted-foreground/60 sm:text-base"
+            className="min-w-0 flex-1 bg-transparent py-3 text-sm font-bold text-[#1A1C1E] outline-none placeholder:text-[#1A1C1E]/40 sm:text-base"
             aria-label="외우고 싶은 단어, 개념, 연도 입력"
           />
 
           {/* 30자 카운터 (PRD 4.1, 5.2) */}
-          <span className="ml-2 shrink-0 text-xs font-semibold tabular-nums text-muted-foreground">
+          <span className="ml-2 shrink-0 font-mono text-xs font-black tabular-nums text-[#1A1C1E]/60 bg-white px-2 py-0.5 rounded-md border border-[#1A1C1E]">
             {keyword.length}/30
           </span>
 
@@ -113,26 +113,26 @@ export const KeywordInput: React.FC<KeywordInputProps> = ({
             <button
               type="button"
               onClick={onClear}
-              className="ml-2 rounded-full p-1 text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              className="ml-2 rounded-full p-1 text-[#1A1C1E] transition hover:bg-black/10"
               aria-label="입력 내용 지우기"
             >
-              <X className="size-4" />
+              <X className="size-4 stroke-[3]" />
             </button>
           )}
         </div>
 
         {/* 빈 값 에러 문구 (PRD 5.1) */}
         {showEmptyError && (
-          <p className="flex items-center gap-1.5 px-1 text-xs font-bold text-destructive animate-in fade-in">
-            <AlertCircle className="size-3.5" />
+          <p className="flex items-center gap-1.5 px-1 text-xs font-black text-[#FF5252] animate-in fade-in">
+            <AlertCircle className="size-4 stroke-[2.5]" />
             외우고 싶은 단어나 개념을 입력해 주세요.
           </p>
         )}
 
         {/* 다중 단어 경고 문구 (PRD 5.2) */}
         {isMultiple && (
-          <p className="flex items-center gap-1.5 px-1 text-xs font-bold text-amber-600 dark:text-amber-400 animate-in fade-in">
-            <AlertCircle className="size-3.5" />
+          <p className="flex items-center gap-1.5 px-1 text-xs font-black text-amber-600 animate-in fade-in">
+            <AlertCircle className="size-4 stroke-[2.5]" />
             한 번에 한 가지 개념만 입력할 때 암기 효과가 가장 높습니다. 단어 하나만 입력해 주세요.
           </p>
         )}
@@ -140,22 +140,25 @@ export const KeywordInput: React.FC<KeywordInputProps> = ({
 
       {/* 추천 칩 */}
       <div className="mt-4 flex flex-wrap items-center gap-2">
-        <span className="flex items-center gap-1 text-xs font-semibold text-muted-foreground">
-          <Sparkles className="size-3 text-primary" /> 추천 키워드:
+        <span className="flex items-center gap-1 text-xs font-black text-[#1A1C1E]/80">
+          <Sparkles className="size-3.5 text-[#FF7675]" /> 추천 키워드:
         </span>
-        {SUGGESTIONS.map((item) => (
-          <button
-            key={item}
-            type="button"
-            onClick={() => {
-              onChange(item);
-              onSubmit(item);
-            }}
-            className="rounded-full border border-border/80 bg-muted/60 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
-          >
-            {item}
-          </button>
-        ))}
+        {SUGGESTIONS.map((item, idx) => {
+          const bgColors = ['bg-[#FFD600]/30', 'bg-[#70F6FF]/30', 'bg-[#00C853]/20'];
+          return (
+            <button
+              key={item}
+              type="button"
+              onClick={() => {
+                onChange(item);
+                onSubmit(item);
+              }}
+              className={`rounded-xl border-2 border-[#1A1C1E] ${bgColors[idx % 3]} px-3 py-1.5 text-xs font-extrabold text-[#1A1C1E] shadow-[2px_2px_0px_#1A1C1E] transition-all hover:translate-x-[-1px] hover:translate-y-[-1px] hover:shadow-[3px_3px_0px_#1A1C1E] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none`}
+            >
+              {item}
+            </button>
+          );
+        })}
       </div>
 
       {/* 생성하기 버튼 (PRD 5.1 disabled, PRD 5.4 로딩 스피너 및 문구) */}
@@ -163,16 +166,16 @@ export const KeywordInput: React.FC<KeywordInputProps> = ({
         type="button"
         disabled={isButtonDisabled}
         onClick={() => onSubmit()}
-        className="mt-5 flex w-full items-center justify-center gap-2.5 rounded-2xl bg-primary px-5 py-4 text-sm font-bold text-primary-foreground shadow-lg shadow-primary/25 transition-all hover:bg-primary/90 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+        className="neo-btn mt-5 flex w-full items-center justify-center gap-2.5 rounded-2xl bg-[#FFD600] px-5 py-4 text-base font-black text-[#1A1C1E] shadow-[4px_4px_0px_#1A1C1E] transition-all"
       >
         {loading ? (
           <>
-            <LoaderCircle className="size-4 animate-spin" />
-            <span className="transition-all duration-300">{LOADING_MESSAGES[loadingMsgIndex]}</span>
+            <LoaderCircle className="size-5 animate-spin stroke-[3]" />
+            <span className="transition-all duration-300 font-extrabold">{LOADING_MESSAGES[loadingMsgIndex]}</span>
           </>
         ) : (
           <>
-            <Lightbulb className="size-4" />
+            <Lightbulb className="size-5 stroke-[2.5]" />
             <span>암기 팁 생성하기 ✨</span>
           </>
         )}

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>짤기억 Mem-Pop</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&amp;family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&amp;family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-fixed-variant": "#004f53",
+                      "on-secondary-fixed-variant": "#454749",
+                      "surface-variant": "#eae2cf",
+                      "on-tertiary-container": "#00696f",
+                      "pop-yellow": "#FFD600",
+                      "deep-navy": "#1A1C1E",
+                      "secondary": "#5d5e61",
+                      "on-surface-variant": "#4d4632",
+                      "inverse-on-surface": "#f9f0dd",
+                      "secondary-container": "#e2e2e5",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed": "#221b00",
+                      "primary": "#705d00",
+                      "on-primary-fixed-variant": "#544600",
+                      "tertiary-fixed": "#70f6ff",
+                      "surface-bright": "#fff8ef",
+                      "tertiary": "#00696f",
+                      "surface-dim": "#e1d9c7",
+                      "on-surface": "#1f1b10",
+                      "on-tertiary": "#ffffff",
+                      "on-tertiary-fixed": "#002022",
+                      "on-error": "#ffffff",
+                      "outline-variant": "#d0c6ab",
+                      "shadow-tint": "rgba(26, 28, 30, 0.12)",
+                      "inverse-surface": "#343024",
+                      "on-secondary-fixed": "#1a1c1e",
+                      "on-secondary": "#ffffff",
+                      "on-secondary-container": "#636467",
+                      "outline": "#7f775f",
+                      "secondary-fixed": "#e2e2e5",
+                      "surface-container-high": "#f0e7d5",
+                      "on-error-container": "#93000a",
+                      "paper-white": "#FFFFFF",
+                      "surface-tint": "#705d00",
+                      "on-primary-container": "#705d00",
+                      "on-primary": "#ffffff",
+                      "primary-fixed": "#ffe170",
+                      "surface-container-lowest": "#ffffff",
+                      "surface-container-low": "#fcf3e0",
+                      "surface-container": "#f6edda",
+                      "error-red": "#FF3D00",
+                      "primary-fixed-dim": "#e9c400",
+                      "background": "#fff8ef",
+                      "primary-container": "#ffd600",
+                      "surface-container-highest": "#eae2cf",
+                      "on-background": "#1f1b10",
+                      "success-green": "#00C853",
+                      "tertiary-container": "#00f0fc",
+                      "inverse-primary": "#e9c400",
+                      "secondary-fixed-dim": "#c6c6c9",
+                      "tertiary-fixed-dim": "#00dce7",
+                      "error-container": "#ffdad6",
+                      "surface": "#fff8ef"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "margin-mobile": "16px",
+                      "stack-lg": "40px",
+                      "stack-md": "24px",
+                      "stack-sm": "12px",
+                      "gutter": "20px",
+                      "base": "8px",
+                      "container-max": "600px"
+              },
+              "fontFamily": {
+                      "label-caps": [
+                              "JetBrains Mono"
+                      ],
+                      "quiz-option": [
+                              "Be Vietnam Pro"
+                      ],
+                      "headline-lg-mobile": [
+                              "Bricolage Grotesque"
+                      ],
+                      "headline-lg": [
+                              "Bricolage Grotesque"
+                      ],
+                      "display-lg": [
+                              "Bricolage Grotesque"
+                      ],
+                      "title-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-md": [
+                              "Be Vietnam Pro"
+                      ],
+                      "body-lg": [
+                              "Be Vietnam Pro"
+                      ]
+              },
+              "fontSize": {
+                      "label-caps": [
+                              "14px",
+                              {
+                                      "lineHeight": "1.0",
+                                      "letterSpacing": "0.05em",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "quiz-option": [
+                              "17px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "28px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "1.2",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "1.1",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "800"
+                              }
+                      ],
+                      "title-md": [
+                              "20px",
+                              {
+                                      "lineHeight": "1.4",
+                                      "fontWeight": "700"
+                              }
+                      ],
+                      "body-md": [
+                              "16px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "body-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "1.6",
+                                      "fontWeight": "500"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+    </script>
+<style>
+        body {
+            background-color: theme('colors.background');
+            color: theme('colors.on-background');
+        }
+        .pop-shadow {
+            box-shadow: 4px 4px 0px 0px theme('colors.deep-navy');
+            transition: all 0.2s ease;
+        }
+        .pop-shadow:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px 0px theme('colors.deep-navy');
+        }
+        .card-shadow {
+            box-shadow: 6px 6px 0px 0px theme('colors.deep-navy');
+        }
+        /* Mobile Specific Overrides */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: theme('fontSize.headline-lg-mobile[0]');
+                line-height: theme('fontSize.headline-lg-mobile[1].lineHeight');
+                font-weight: theme('fontSize.headline-lg-mobile[1].fontWeight');
+            }
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased md:max-w-container-max md:mx-auto">
+<!-- TopNavBar -->
+<header class="w-full top-0 sticky z-50 bg-background dark:bg-deep-navy border-b-3 border-deep-navy dark:border-primary-fixed shadow-[4px_4px_0px_0px_rgba(26,28,30,1)]">
+<div class="flex justify-between items-center px-margin-mobile py-4 max-w-container-max mx-auto">
+<div class="font-display-lg text-headline-lg-mobile text-primary dark:text-primary-fixed italic font-bold">
+                짤기억 Mem-Pop
+            </div>
+<div class="hidden md:flex gap-4">
+<a class="font-body-lg text-body-lg text-secondary dark:text-secondary-fixed hover:text-primary hover:translate-y-[2px] hover:translate-x-[2px] hover:shadow-none transition-all" href="#">서비스 소개</a>
+</div>
+<button class="bg-pop-yellow text-deep-navy font-title-md text-title-md px-4 py-2 border-2 border-deep-navy rounded-DEFAULT pop-shadow md:hidden">
+                지금 시작하기
+            </button>
+<button class="hidden md:block bg-pop-yellow text-deep-navy font-title-md text-title-md px-6 py-2 border-[3px] border-deep-navy rounded-DEFAULT pop-shadow">
+                지금 시작하기
+            </button>
+</div>
+</header>
+<main class="px-margin-mobile py-stack-lg flex flex-col gap-stack-lg">
+<!-- Hero Section -->
+<section class="flex flex-col items-center text-center gap-stack-md pt-stack-md">
+<div class="inline-block bg-primary-container text-on-primary-container font-label-caps text-label-caps px-3 py-1 border-2 border-deep-navy rounded-full mb-2">
+                STUDY SMARTER, NOT HARDER
+            </div>
+<h1 class="font-display-lg text-display-lg hero-title text-deep-navy tracking-tight">
+                단어를 짤처럼,<br/>기억은 팝하게!
+            </h1>
+<p class="font-body-lg text-body-lg text-secondary max-w-[400px]">
+                외우기 힘든 영단어, 지루한 암기는 이제 그만. 뇌리에 팍 꽂히는 3줄 스토리와 시각적 힌트로 초고속 암기를 경험하세요.
+            </p>
+<button class="mt-4 bg-pop-yellow text-deep-navy font-title-md text-title-md px-8 py-4 border-[3px] border-deep-navy rounded-DEFAULT card-shadow active:translate-y-[2px] active:translate-x-[2px] active:shadow-[4px_4px_0px_0px_rgba(26,28,30,1)] transition-all w-full max-w-[300px]">
+                무료로 짤기억 시작하기
+            </button>
+</section>
+<!-- Why Mem-Pop (Bento style grid on desktop, stacked on mobile) -->
+<section class="flex flex-col gap-stack-sm mt-stack-lg">
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-deep-navy mb-4 text-center">왜 짤기억인가요?</h2>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-stack-sm">
+<!-- Card 1 -->
+<div class="bg-paper-white border-[3px] border-deep-navy rounded-lg p-stack-md card-shadow flex flex-col gap-2">
+<div class="w-12 h-12 bg-tertiary-container rounded-full border-2 border-deep-navy flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-deep-navy" style="font-variation-settings: 'FILL' 1;">bolt</span>
+</div>
+<h3 class="font-title-md text-title-md text-deep-navy">초고속 연상</h3>
+<p class="font-body-md text-body-md text-secondary">단어의 뜻과 발음을 절묘하게 엮은 3줄 스토리로 뇌리에 강렬하게 각인시킵니다.</p>
+</div>
+<!-- Card 2 -->
+<div class="bg-paper-white border-[3px] border-deep-navy rounded-lg p-stack-md card-shadow flex flex-col gap-2">
+<div class="w-12 h-12 bg-primary-container rounded-full border-2 border-deep-navy flex items-center justify-center mb-2">
+<span class="material-symbols-outlined text-deep-navy" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<h3 class="font-title-md text-title-md text-deep-navy">도파민 팝</h3>
+<p class="font-body-md text-body-md text-secondary">시각적인 피드백과 팝한 애니메이션으로 암기 과정에 소소한 재미를 더합니다.</p>
+</div>
+</div>
+</section>
+<!-- Preview Card -->
+<section class="mt-stack-lg bg-surface-container-highest border-[3px] border-deep-navy rounded-xl p-stack-md card-shadow flex flex-col items-center">
+<div class="w-full flex justify-between items-center mb-4">
+<span class="font-label-caps text-label-caps bg-deep-navy text-paper-white px-2 py-1 rounded">MEM-TIP</span>
+<span class="material-symbols-outlined text-deep-navy">volume_up</span>
+</div>
+<div class="text-center mb-6">
+<h3 class="font-display-lg text-display-lg text-deep-navy mb-1">mitigate</h3>
+<p class="font-title-md text-title-md text-secondary">[ˈmɪtɪɡeɪt]</p>
+</div>
+<div class="w-full bg-paper-white border-2 border-deep-navy rounded-lg p-4 mb-4">
+<p class="font-body-lg text-body-lg text-deep-navy text-center">
+                    '미티게이트' -&gt; <span class="bg-pop-yellow font-bold px-1 rounded">밑이 게이트</span>(문)처럼 열려있어서 물이 빠져나가 피해를 <b>완화하다</b>.
+                </p>
+</div>
+<div class="font-body-md text-body-md text-deep-navy bg-success-green/20 border-2 border-success-green px-4 py-2 rounded-lg w-full text-center">
+                뜻: 완화하다, 경감시키다
+            </div>
+</section>
+</main>
+<!-- Bottom CTA (Sticky on Mobile) -->
+<div class="fixed bottom-0 left-0 w-full p-4 bg-background/90 backdrop-blur-sm border-t-2 border-deep-navy md:static md:bg-transparent md:border-none md:p-0 md:mt-stack-lg z-40">
+<div class="max-w-container-max mx-auto flex justify-center">
+<button class="bg-pop-yellow text-deep-navy font-title-md text-title-md px-8 py-4 border-[3px] border-deep-navy rounded-DEFAULT card-shadow w-full md:w-auto hover:bg-primary-fixed transition-colors active:translate-y-[2px] active:translate-x-[2px] active:shadow-[2px_2px_0px_0px_rgba(26,28,30,1)]">
+                지금 바로 외워보기
+            </button>
+</div>
+</div>
+<!-- Footer -->
+<footer class="w-full mt-stack-lg bg-surface-container dark:bg-deep-navy border-t-2 border-outline-variant flex flex-col items-center gap-stack-sm py-stack-md pb-[100px] md:pb-stack-md transition-all duration-200">
+<div class="font-display-lg text-body-lg text-primary font-bold italic mb-2">
+            짤기억 Mem-Pop
+        </div>
+<div class="flex gap-4">
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-secondary-fixed hover:text-primary transition-colors" href="#">이용약관</a>
+<a class="font-label-caps text-label-caps text-on-surface-variant dark:text-secondary-fixed hover:text-primary transition-colors" href="#">개인정보처리방침</a>
+</div>
+<div class="font-label-caps text-label-caps text-on-surface-variant dark:text-secondary-fixed mt-2">
+            © 2024 짤기억 Mem-Pop. All rights reserved.
+        </div>
+</footer>
+</body></html>

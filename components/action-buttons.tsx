@@ -20,12 +20,12 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
         type="button"
         disabled={loading}
         onClick={onRegenerate}
-        className="flex flex-1 items-center justify-center gap-2 rounded-2xl border border-border bg-card px-4 py-3.5 text-sm font-bold text-foreground transition-colors hover:border-primary/50 hover:bg-primary/5 hover:text-primary active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50"
+        className="neo-btn flex flex-1 items-center justify-center gap-2 rounded-2xl bg-white px-4 py-3.5 text-sm font-black text-[#1A1C1E] transition-all hover:bg-[#FFD600]/30"
       >
         {loading ? (
-          <LoaderCircle className="size-4 animate-spin" />
+          <LoaderCircle className="size-4 animate-spin stroke-[3]" />
         ) : (
-          <RotateCcw className="size-4" />
+          <RotateCcw className="size-4 stroke-[2.5]" />
         )}
         <span>다른 팁 다시 생성하기</span>
       </button>
@@ -33,11 +33,12 @@ export const ActionButtons: React.FC<ActionButtonsProps> = ({
       <button
         type="button"
         onClick={onReset}
-        className="flex flex-1 items-center justify-center gap-2 rounded-2xl bg-muted/80 px-4 py-3.5 text-sm font-bold text-foreground transition-colors hover:bg-muted active:scale-[0.99]"
+        className="neo-btn flex flex-1 items-center justify-center gap-2 rounded-2xl bg-[#FFD600] px-4 py-3.5 text-sm font-black text-[#1A1C1E] transition-all hover:bg-[#ffe144]"
       >
-        <PlusCircle className="size-4 text-muted-foreground" />
+        <PlusCircle className="size-4 stroke-[2.5]" />
         <span>새로운 단어 입력하기</span>
       </button>
     </div>
   );
 };
+

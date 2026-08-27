@@ -1,39 +1,40 @@
 import { Analytics } from '@vercel/analytics/next'
-import { Noto_Sans_KR } from 'next/font/google'
+import { Bricolage_Grotesque, JetBrains_Mono, Noto_Sans_KR } from 'next/font/google'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
-const notoSansKr = Noto_Sans_KR({ subsets: ['latin'], display: 'swap' })
+const bricolage = Bricolage_Grotesque({
+  subsets: ['latin'],
+  weight: ['400', '600', '700', '800'],
+  variable: '--font-bricolage',
+  display: 'swap',
+})
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['500', '700'],
+  variable: '--font-mono',
+  display: 'swap',
+})
+
+const notoSansKr = Noto_Sans_KR({
+  subsets: ['latin'],
+  weight: ['400', '500', '700', '900'],
+  variable: '--font-sans',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
-  title: '짤기억 (Mem-Pop) | AI 암기 튜터',
-  description: '안 외워지는 단어·개념·연도를 3초 만에 뇌리에 콱! 재미있는 연상 암기 팁을 만들어 보세요.',
-  generator: 'v0.app',
+  title: '짤기억 (Mem-Pop) | 단어를 짤처럼, 기억은 팝하게!',
+  description: '외우기 힘든 단어·개념·연도를 단 한 줄로! 뇌리에 팍 꽂히는 3줄 스토리와 3지선다 1초 퀴즈 AI 튜터',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: '/icon.svg',
   },
 }
 
 export const viewport: Viewport = {
-  colorScheme: 'light dark',
-  themeColor: [
-    { media: '(prefers-color-scheme: light)', color: 'white' },
-    { media: '(prefers-color-scheme: dark)', color: 'black' },
-  ],
+  colorScheme: 'light',
+  themeColor: '#FFD600',
 }
 
 export default function RootLayout({
@@ -42,8 +43,11 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="ko" className="bg-background">
-      <body className={`${notoSansKr.className} antialiased`}>
+    <html
+      lang="ko"
+      className={`${bricolage.variable} ${jetbrainsMono.variable} ${notoSansKr.variable}`}
+    >
+      <body className="min-h-screen bg-[#FFF8EF] text-[#1A1C1E] font-sans antialiased selection:bg-[#FFD600] selection:text-[#1A1C1E]">
         {children}
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>

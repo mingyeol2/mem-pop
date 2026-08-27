@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Sparkles, Brain, BookMarked } from 'lucide-react';
+import { Sparkles, Brain, BookMarked, Home, ArrowLeft } from 'lucide-react';
 import { MemPopContent, ErrorType, GenerateResponse } from '@/types/mem-pop';
 import { fetchWithTimeout, TimeoutError } from '@/lib/fetch-with-timeout';
 import { KeywordInput } from '@/components/keyword-input';
@@ -12,10 +12,12 @@ import { ActionButtons } from '@/components/action-buttons';
 import { GuardrailCard } from '@/components/guardrail-card';
 import { ErrorCard } from '@/components/error-card';
 import { SavedCardsDrawer } from '@/components/saved-cards-drawer';
+import { LandingView } from '@/components/landing-view';
 import { getSavedCards, removeCard } from '@/lib/storage';
 import { SavedMemPopCard } from '@/types/storage';
 
 export default function Page() {
+  const [currentView, setCurrentView] = useState<'landing' | 'app'>('landing');
   const [keyword, setKeyword] = useState('');
   const [emptyTouched, setEmptyTouched] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -104,7 +106,7 @@ export default function Page() {
         setContent(json.data);
       } catch (err: unknown) {
         if (err instanceof TimeoutError) {
-          // PRD 5.4: 10초 타임아웃 예외 처리
+          // PRD 5.4: 타임아웃 예외 처리
           setErrorState({
             errorType: 'TIMEOUT',
             message: '요청 시간이 초과되었습니다. 다시 시도해 주세요.',
@@ -123,6 +125,15 @@ export default function Page() {
     [keyword]
   );
 
+  const handleStartFromLanding = (initialKeyword?: string) => {
+    setCurrentView('app');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (initialKeyword) {
+      setKeyword(initialKeyword);
+      handleGenerate(initialKeyword);
+    }
+  };
+
   const handleReset = () => {
     setKeyword('');
     setContent(null);
@@ -138,6 +149,7 @@ export default function Page() {
     setSelectedQuizOption(null);
     setErrorState(null);
     setEmptyTouched(false);
+    setCurrentView('app');
   };
 
   const handleDeleteSavedCard = (id: string) => {
@@ -145,48 +157,74 @@ export default function Page() {
     refreshSavedCards();
   };
 
-  return (
-    <main className="min-h-screen bg-background px-4 py-8 text-foreground sm:py-14">
-      <div className="mx-auto flex max-w-xl flex-col gap-7">
-        {/* 상단 헤더 영역 */}
-        <header className="relative text-center">
-          {/* 우측 상단 내 암기장 열기 버튼 */}
-          <div className="mb-3 flex items-center justify-between">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
-              <Sparkles className="size-3.5" />
-              <span>AI 암기 튜터</span>
-            </div>
+  const handleSuggestionSelect = (suggestion: string) => {
+    setKeyword(suggestion);
+    handleGenerate(suggestion);
+  };
 
+  // 랜딩페이지 뷰
+  if (currentView === 'landing') {
+    return <LandingView onStartService={handleStartFromLanding} />;
+  }
+
+  // 실제 AI 암기 서비스 뷰
+  return (
+    <main className="min-h-screen bg-[#FFF8EF] px-4 py-6 text-[#1A1C1E] sm:py-10">
+      <div className="mx-auto flex max-w-xl flex-col gap-6">
+        {/* 상단 네비게이션 헤더 */}
+        <header className="relative">
+          <div className="mb-4 flex items-center justify-between">
+            {/* 홈(랜딩페이지) 돌아가기 버튼 */}
+            <button
+              type="button"
+              onClick={() => setCurrentView('landing')}
+              className="neo-btn inline-flex items-center gap-1.5 rounded-xl bg-white px-3 py-1.5 text-xs font-black text-[#1A1C1E] transition hover:bg-[#FFD600]/30"
+              title="서비스 소개 랜딩페이지로 이동"
+            >
+              <ArrowLeft className="size-3.5 stroke-[3]" />
+              <span>서비스 소개</span>
+            </button>
+
+            {/* 우측 상단 내 암기장 열기 버튼 */}
             <button
               type="button"
               onClick={() => setIsDrawerOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/90 px-3.5 py-1.5 text-xs font-bold text-foreground shadow-xs transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
+              className="neo-btn inline-flex items-center gap-1.5 rounded-xl bg-[#FFD600] px-3.5 py-1.5 text-xs font-black text-[#1A1C1E] transition hover:bg-[#ffe144]"
               aria-label="나만의 암기장 열기"
             >
-              <BookMarked className="size-3.5 text-primary" />
+              <BookMarked className="size-3.5 stroke-[2.5]" />
               <span>내 암기장</span>
               {savedCards.length > 0 && (
-                <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-black text-primary-foreground">
+                <span className="flex size-4 items-center justify-center rounded-full bg-[#1A1C1E] text-[10px] font-black text-white">
                   {savedCards.length}
                 </span>
               )}
             </button>
           </div>
 
-          <h1 className="text-balance text-3xl font-black tracking-tight sm:text-4xl">
-            <span className="inline-flex items-center gap-2">
-              <Brain className="size-8 text-primary sm:size-9" />
-              짤기억
-            </span>{' '}
-            <span className="text-primary">(Mem-Pop)</span>
-          </h1>
+          <div className="text-center">
+            <div className="inline-flex items-center gap-1.5 rounded-full border-2 border-[#1A1C1E] bg-[#70F6FF] px-3.5 py-1 font-mono-tag text-xs font-black text-[#1A1C1E] shadow-[2px_2px_0px_#1A1C1E] mb-2">
+              <Sparkles className="size-3.5" />
+              <span>AI 암기 튜터 실시간 생성</span>
+            </div>
 
-          <p className="mt-3 text-pretty text-base font-bold text-foreground/80 sm:text-lg">
-            안 외워지는 단어·개념·연도를 3초 만에 뇌리에 콱!
-          </p>
-          <p className="mx-auto mt-1.5 max-w-md text-pretty text-xs leading-relaxed text-muted-foreground sm:text-sm">
-            외우기 힘든 하나의 사건이나 개념을 입력하면 배경 설명과 펀치라인 암기 팁, 1초 확인 퀴즈를 생성합니다.
-          </p>
+            <h1 className="font-heading text-3xl font-black tracking-tight sm:text-4xl">
+              <span className="inline-flex items-center gap-2">
+                <Brain className="size-8 text-[#1A1C1E] sm:size-9" />
+                짤기억
+              </span>{' '}
+              <span className="bg-[#FFD600] px-2 py-0.5 border-2 border-[#1A1C1E] rounded-lg shadow-[2px_2px_0_0_#1A1C1E] inline-block text-xl sm:text-2xl font-black">
+                Mem-Pop
+              </span>
+            </h1>
+
+            <p className="mt-2.5 text-base font-black text-[#1A1C1E]/90 sm:text-lg">
+              안 외워지는 단어·개념·연도를 3초 만에 뇌리에 콱!
+            </p>
+            <p className="mx-auto mt-1 max-w-md text-xs font-bold leading-relaxed text-[#1A1C1E]/70 sm:text-sm">
+              외우고 싶은 단어를 입력하면 3줄 연상 스토리와 1초 퀴즈를 즉시 생성합니다.
+            </p>
+          </div>
         </header>
 
         {/* 1. 키워드 입력 섹션 */}
@@ -284,10 +322,11 @@ export default function Page() {
         />
 
         {/* 푸터 영역 */}
-        <footer className="pt-4 pb-6 text-center text-xs font-medium text-muted-foreground">
-          기억은 연결될 때 오래 남아요 · Mem-Pop
+        <footer className="pt-4 pb-8 text-center text-xs font-bold text-[#1A1C1E]/60">
+          단어를 짤처럼, 기억은 팝하게 · Mem-Pop
         </footer>
       </div>
     </main>
   );
 }
+

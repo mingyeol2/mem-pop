@@ -103,26 +103,26 @@ export const StoryCard: React.FC<StoryCardProps> = ({ content, onSavedChange }) 
   return (
     <div className="flex flex-col gap-4">
       {/* 1. 핵심 배경 & 개념 이해 카드 */}
-      <article className="rounded-3xl border border-border/80 bg-card p-5 shadow-sm sm:p-6">
-        <div className="mb-2.5 flex items-center gap-2 text-sm font-bold text-primary">
-          <span className="flex size-6 items-center justify-center rounded-lg bg-primary/10 text-xs">
-            <BookOpen className="size-3.5" />
+      <article className="rounded-3xl border-[3px] border-[#1A1C1E] bg-white p-5 card-shadow-lg sm:p-6">
+        <div className="mb-2.5 flex items-center gap-2">
+          <span className="flex size-7 items-center justify-center rounded-lg border-2 border-[#1A1C1E] bg-[#70F6FF] text-[#1A1C1E] shadow-[2px_2px_0px_#1A1C1E]">
+            <BookOpen className="size-4 stroke-[2.5]" />
           </span>
-          핵심 배경 & 개념 이해
+          <span className="font-heading text-sm font-black text-[#1A1C1E]">핵심 배경 & 개념 이해</span>
         </div>
-        <p className="text-sm font-normal leading-relaxed text-muted-foreground sm:text-base">
+        <p className="text-sm font-bold leading-relaxed text-[#1A1C1E]/80 sm:text-base">
           {content.background}
         </p>
       </article>
 
       {/* 2. 3줄 연상 암기법 카드 */}
-      <article className="relative overflow-hidden rounded-3xl border border-primary/20 bg-gradient-to-br from-primary/10 via-card to-card p-5 shadow-md shadow-primary/5 sm:p-6">
-        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3.5">
-          <div className="flex items-center gap-2 text-sm font-bold text-primary">
-            <span className="flex size-6 items-center justify-center rounded-lg bg-primary/20 text-xs">
-              <Lightbulb className="size-3.5" />
+      <article className="relative overflow-hidden rounded-3xl border-[3px] border-[#1A1C1E] bg-white p-5 card-shadow-lg sm:p-6">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2 border-b-2 border-[#1A1C1E]/10 pb-3.5">
+          <div className="flex items-center gap-2">
+            <span className="flex size-7 items-center justify-center rounded-lg border-2 border-[#1A1C1E] bg-[#FFD600] text-[#1A1C1E] shadow-[2px_2px_0px_#1A1C1E]">
+              <Lightbulb className="size-4 stroke-[2.5]" />
             </span>
-            3줄 연상 암기법
+            <span className="font-heading text-sm font-black text-[#1A1C1E]">3줄 연상 암기법</span>
           </div>
 
           {/* 통합 툴바 버튼 그룹 */}
@@ -132,10 +132,10 @@ export const StoryCard: React.FC<StoryCardProps> = ({ content, onSavedChange }) 
               <button
                 type="button"
                 onClick={handleToggleTTS}
-                className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1.5 text-xs font-semibold backdrop-blur-sm transition-all active:scale-95 ${
+                className={`neo-btn inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-black transition-all ${
                   isPlayingTTS
-                    ? 'border-primary bg-primary text-primary-foreground shadow-sm animate-pulse'
-                    : 'border-border bg-background/80 text-muted-foreground hover:border-primary/40 hover:text-primary'
+                    ? 'bg-[#FF7675] text-white shadow-[2px_2px_0px_#1A1C1E] animate-pulse'
+                    : 'bg-[#FFF8EF] text-[#1A1C1E] hover:bg-[#FFD600]'
                 }`}
                 title={isPlayingTTS ? '음성 낭독 정지' : '음성으로 듣기'}
               >
@@ -146,7 +146,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({ content, onSavedChange }) 
                   </>
                 ) : (
                   <>
-                    <Volume2 className="size-3.5 text-primary" />
+                    <Volume2 className="size-3.5 text-[#1A1C1E]" />
                     <span>듣기</span>
                   </>
                 )}
@@ -157,10 +157,10 @@ export const StoryCard: React.FC<StoryCardProps> = ({ content, onSavedChange }) 
             <button
               type="button"
               onClick={handleToggleSave}
-              className={`inline-flex items-center gap-1 rounded-xl border px-2.5 py-1.5 text-xs font-semibold backdrop-blur-sm transition-all active:scale-95 ${
+              className={`neo-btn inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-xs font-black transition-all ${
                 saved
-                  ? 'border-amber-500/50 bg-amber-500/10 text-amber-600 dark:text-amber-400'
-                  : 'border-border bg-background/80 text-muted-foreground hover:border-amber-500/40 hover:text-amber-500'
+                  ? 'bg-[#FFD600] text-[#1A1C1E]'
+                  : 'bg-[#FFF8EF] text-[#1A1C1E] hover:bg-[#FFD600]/40'
               }`}
               title={saved ? '암기장에서 제거' : '내 암기장에 저장'}
             >
@@ -182,10 +182,10 @@ export const StoryCard: React.FC<StoryCardProps> = ({ content, onSavedChange }) 
               type="button"
               onClick={handleExportImage}
               disabled={isExporting}
-              className="inline-flex items-center gap-1 rounded-xl border border-border bg-background/80 px-2.5 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur-sm transition-colors hover:border-primary/40 hover:text-primary active:scale-95 disabled:opacity-50"
+              className="neo-btn inline-flex items-center gap-1 rounded-xl bg-[#FFF8EF] px-2.5 py-1.5 text-xs font-black text-[#1A1C1E] transition-all hover:bg-[#70F6FF]"
               title="SNS 공유용 짤 카드 이미지(PNG) 저장"
             >
-              <Download className="size-3.5" />
+              <Download className="size-3.5 stroke-[2.5]" />
               <span>짤저장</span>
             </button>
 
@@ -193,17 +193,17 @@ export const StoryCard: React.FC<StoryCardProps> = ({ content, onSavedChange }) 
             <button
               type="button"
               onClick={handleCopy}
-              className="inline-flex items-center gap-1 rounded-xl border border-border bg-background/80 px-2.5 py-1.5 text-xs font-semibold text-muted-foreground backdrop-blur-sm transition-colors hover:border-primary/40 hover:text-primary active:scale-95"
+              className="neo-btn inline-flex items-center gap-1 rounded-xl bg-[#FFF8EF] px-2.5 py-1.5 text-xs font-black text-[#1A1C1E] transition-all hover:bg-[#00C853]/20"
               title="텍스트 클립보드 복사"
             >
               {copied ? (
                 <>
-                  <Check className="size-3.5 text-emerald-500" />
-                  <span className="text-emerald-600 font-bold">복사됨</span>
+                  <Check className="size-3.5 text-[#00C853] stroke-[3]" />
+                  <span className="text-[#00C853] font-black">복사됨!</span>
                 </>
               ) : (
                 <>
-                  <Clipboard className="size-3.5" />
+                  <Clipboard className="size-3.5 stroke-[2.5]" />
                   <span>복사</span>
                 </>
               )}
@@ -212,16 +212,24 @@ export const StoryCard: React.FC<StoryCardProps> = ({ content, onSavedChange }) 
         </div>
 
         <div className="flex flex-col gap-3">
-          {content.story.map((line, index) => (
-            <div key={index} className="flex items-start gap-3 rounded-2xl bg-card/60 p-3 shadow-xs">
-              <span className="mt-0.5 shrink-0 rounded-lg bg-primary/15 px-2 py-1 text-[11px] font-bold text-primary">
-                {STEP_BADGES[index] || `${index + 1}단계`}
-              </span>
-              <p className="text-sm font-medium leading-relaxed text-foreground sm:text-base">
-                {line}
-              </p>
-            </div>
-          ))}
+          {content.story.map((line, index) => {
+            const badgeBg = ['bg-[#70F6FF]', 'bg-[#FF7675] text-white', 'bg-[#FFD600]'];
+            return (
+              <div
+                key={index}
+                className="flex items-start gap-3 rounded-2xl border-2 border-[#1A1C1E] bg-[#FFF8EF] p-3.5 shadow-[3px_3px_0px_#1A1C1E]"
+              >
+                <span
+                  className={`mt-0.5 shrink-0 rounded-lg border border-[#1A1C1E] ${badgeBg[index % 3]} px-2 py-1 text-[11px] font-black shadow-[1px_1px_0px_#1A1C1E]`}
+                >
+                  {STEP_BADGES[index] || `${index + 1}단계`}
+                </span>
+                <p className="text-sm font-bold leading-relaxed text-[#1A1C1E] sm:text-base">
+                  {line}
+                </p>
+              </div>
+            );
+          })}
         </div>
       </article>
     </div>

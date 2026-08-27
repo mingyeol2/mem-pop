@@ -8,26 +8,28 @@ interface GuardrailCardProps {
   onSuggestionClick: (suggestion: string) => void;
 }
 
-const EXAMPLE_KEYWORDS = ['임진왜란 1592', '미토콘드리아', 'mitigate', '아나필락시스'];
+const EXAMPLE_KEYWORDS = ['임진왜란 1592', '미토콘드리아', 'mitigate', '베르누이 방정식'];
 
 export const GuardrailCard: React.FC<GuardrailCardProps> = ({
   message = '올바른 단어 또는 개념을 입력해 주세요. (예: 역사적 사건, 영단어, 전문 용어)',
   onSuggestionClick,
 }) => {
   return (
-    <article className="rounded-3xl border border-amber-500/30 bg-gradient-to-br from-amber-500/10 via-card to-card p-6 shadow-sm animate-in fade-in slide-in-from-top-3 duration-300">
-      <div className="flex items-center gap-2.5 text-amber-600 dark:text-amber-400">
-        <ShieldAlert className="size-5 shrink-0" />
-        <h3 className="text-sm font-bold sm:text-base">AI 암기 가드레일 안내</h3>
+    <article className="rounded-3xl border-[3px] border-[#1A1C1E] bg-[#FFD600]/25 p-6 card-shadow-lg animate-in fade-in slide-in-from-top-3 duration-300">
+      <div className="flex items-center gap-2.5">
+        <span className="flex size-7 items-center justify-center rounded-lg border-2 border-[#1A1C1E] bg-[#FFD600] text-[#1A1C1E] shadow-[2px_2px_0px_#1A1C1E]">
+          <ShieldAlert className="size-4 stroke-[2.5]" />
+        </span>
+        <h3 className="font-heading text-base font-black text-[#1A1C1E]">AI 암기 가드레일 안내</h3>
       </div>
 
-      <p className="mt-3 text-sm font-medium leading-relaxed text-foreground/90 sm:text-base">
+      <p className="mt-3 text-sm font-bold leading-relaxed text-[#1A1C1E] sm:text-base">
         {message}
       </p>
 
-      <div className="mt-5 rounded-2xl border border-border/60 bg-background/70 p-4">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
-          <Sparkles className="size-3.5 text-primary" /> 추천 예시로 다시 시도해 보세요:
+      <div className="mt-5 rounded-2xl border-2 border-[#1A1C1E] bg-white p-4 shadow-[3px_3px_0px_#1A1C1E]">
+        <div className="flex items-center gap-1.5 text-xs font-black text-[#1A1C1E]">
+          <Sparkles className="size-3.5 text-[#FF7675]" /> 추천 예시로 다시 시도해 보세요:
         </div>
         <div className="mt-2.5 flex flex-wrap gap-2">
           {EXAMPLE_KEYWORDS.map((item) => (
@@ -35,10 +37,10 @@ export const GuardrailCard: React.FC<GuardrailCardProps> = ({
               key={item}
               type="button"
               onClick={() => onSuggestionClick(item)}
-              className="inline-flex items-center gap-1 rounded-xl border border-border bg-card px-3 py-1.5 text-xs font-semibold text-foreground transition hover:border-primary/40 hover:text-primary active:scale-95"
+              className="neo-btn inline-flex items-center gap-1 rounded-xl bg-[#FFF8EF] px-3 py-1.5 text-xs font-black text-[#1A1C1E] transition hover:bg-[#FFD600]"
             >
               <span>{item}</span>
-              <ArrowUpRight className="size-3 text-muted-foreground" />
+              <ArrowUpRight className="size-3 stroke-[3]" />
             </button>
           ))}
         </div>
@@ -46,3 +48,4 @@ export const GuardrailCard: React.FC<GuardrailCardProps> = ({
     </article>
   );
 };
+
