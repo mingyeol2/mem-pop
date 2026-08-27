@@ -10,9 +10,10 @@
 | :--- | :--- |
 | **서비스명** | **짤기억 (Mem-Pop)** - 뇌리에 콱 박히는 AI 암기 튜터 |
 | **핵심 가치** | 단 한 줄의 키워드 입력으로 **3줄 연상 암기 스토리**와 **3지선다 1초 퀴즈**를 5초 내 즉시 생성 및 인터랙션 |
+| **AI 엔진** | **Google Gemini 3.7 / 3.6 Flash 실시간 연동 (API Key 셋팅 완료)** |
 | **아키텍처 원칙**| 로그인/결제/별도 DB 연동 없는 **초경량 단일 화면(Single Page) 클라이언트 중심 웹 애플리케이션** |
 | **기술 스택** | Next.js (App Router), React 19, TypeScript, Tailwind CSS, Framer Motion, Lucide React |
-| **진행 상태** | **스프린트 0 ~ 4 전 항목 개발 완료 (v1.0.0 완료)** |
+| **진행 상태** | **스프린트 0 ~ 7 전 항목 개발 및 Gemini AI 실시간 연동 고도화 완료 (v1.3.0)** |
 
 ---
 
@@ -32,6 +33,12 @@ gantt
     예외 처리 6종 및 회복 탄력성(Retry/Timeout) (완료) :done, s3, after s2, 1d
     section Sprint 4
     UI/UX 폴리싱, DoD 전수 검증 및 빌드 완료 (완료) :done, s4, after s3, 1d
+    section Sprint 5
+    TTS AI 음성 낭독 (소리내어 외우기) (완료)      :done, s5, after s4, 1d
+    section Sprint 6
+    나만의 암기장 저장 (Local Storage) (완료)     :done, s6, after s5, 1d
+    section Sprint 7
+    SNS 짤 카드 이미지 생성 & 다운로드 (완료)       :done, s7, after s6, 1d
 ```
 
 ---
@@ -99,9 +106,9 @@ gantt
 - [x] **Task 3.3: 네트워크/서버 오류 자동 1회 재시도 (PRD 5.3)**
   - 5xx 에러 또는 네트워크 오류 발생 시 **1초 대기 후 백그라운드 자동 1회 재요청(Auto Retry)**
   - 2회 연속 실패 시: 입력값 보존 + 안내 문구 노출: *"일시적인 오류로 인해 암기법 생성에 실패했습니다. 잠시 후 다시 시도해 주세요."* + 수동 재시도 버튼 활성화
-- [x] **Task 3.4: 10초 타임아웃 및 스피너 로딩 처리 (PRD 5.4)**
-  - 요청 즉시 버튼 비활성화 + 스피너 + *"뇌리에 박히는 암기 팁을 짜내는 중..."* 문구
-  - **10초 타임아웃** 초과 시 요청 강제 중단(`AbortController`)
+- [x] **Task 3.4: 25초 타임아웃 및 스피너 로딩 처리 (PRD 5.4)**
+  - 요청 즉시 버튼 비활성화 + 스피너 + 다이내믹 AI 안내 문구 노출
+  - **25초 타임아웃** 초과 시 요청 강제 중단(`AbortController`)
   - 입력값 유지 + 경고 문구 노출: *"요청 시간이 초과되었습니다. 다시 시도해 주세요."*
 - [x] **Task 3.5: 무의미한 단어/외계어 가드레일 UI 처리 (PRD 5.5, [`components/guardrail-card.tsx`](../components/guardrail-card.tsx))**
   - `INVALID_INPUT` 응답 수신 시 결과 카드 대신 안내 카드 노출:
@@ -126,6 +133,36 @@ gantt
 
 ---
 
+### 🔹 Sprint 5: TTS AI 음성 낭독 (소리내어 외우기)
+> **목표:** Web Speech API를 활용하여 시각뿐 아니라 청각을 결합한 다감각 암기 경험 구축
+
+- [x] **Task 5.1: Web Speech API 래퍼 구현 ([`lib/tts.ts`](../lib/tts.ts))**
+  - 한국어 음성 보이스 매칭, 배속/음조 최적화, 시작/종료/에러 이벤트 제어
+- [x] **Task 5.2: 스토리 카드 [🔊 듣기 / 정지] 인터랙션 연동 ([`components/story-card.tsx`](../components/story-card.tsx))**
+  - 음성 낭독 중 시각적 이퀄라이저/펄스 애니메이션 및 즉시 정지 지원
+
+---
+
+### 🔹 Sprint 6: 나만의 암기장 저장 (Local Storage) & 복습 서랍
+> **목표:** 로그인/외부 DB 없이 브라우저 로컬 저장소를 활용한 개인화 암기장 구축
+
+- [x] **Task 6.1: `localStorage` CRUD 모듈 ([`lib/storage.ts`](../lib/storage.ts), [`types/storage.ts`](../types/storage.ts))**
+  - 중복 방지 저장, 삭제, 전체 목록 조회 유틸리티
+- [x] **Task 6.2: 나만의 암기장 슬라이드 서랍 ([`components/saved-cards-drawer.tsx`](../components/saved-cards-drawer.tsx))**
+  - 저장된 단어 개수 배지, 서랍 슬라이드 애니메이션, 개별 삭제, 단어별 즉시 복습 연동
+- [x] **Task 6.3: 스토리 카드 [⭐ 저장 / 저장됨] 토글 연동 ([`components/story-card.tsx`](../components/story-card.tsx))**
+
+---
+
+### 🔹 Sprint 7: SNS 짤 카드 이미지 생성 & 다운로드
+> **목표:** 수험생 커뮤니티 및 SNS 바이럴을 위한 고화질 카드 이미지 자동 렌더링 지원
+
+- [x] **Task 7.1: HTML5 Canvas 기반 카드 렌더링 모듈 ([`lib/image-export.ts`](../lib/image-export.ts))**
+  - 1080x1350(4:5) SNS 최적화 해상도, 네온 그라데이션, 3줄 스토리 및 1초 퀴즈 맛보기 배치
+- [x] **Task 7.2: 원클릭 PNG 다운로드 버튼 연동 ([`components/story-card.tsx`](../components/story-card.tsx))**
+
+---
+
 ## 🎯 4. 완료 조건 (Definition of Done) 검증 매트릭스
 
 | 검증 항목 | PRD 요구사항 매핑 | 구현 파일 / 검증 기준 | 최종 상태 |
@@ -136,7 +173,7 @@ gantt
 | **빈 값 유효성 검증** | PRD 5.1, 6.3 | [`components/keyword-input.tsx`](../components/keyword-input.tsx) 버튼 비활성화 및 레드 보더/문구 | ✅ 완료 |
 | **30자 제한 & 다중단어 경고**| PRD 5.2, 6.3 | 30자 차단 및 쉼표/슬래시 등 2개 이상 감지 시 경고 노출 | ✅ 완료 |
 | **네트워크 오류 1회 Auto Retry**| PRD 5.3, 6.3 | 1초 후 백그라운드 자동 재요청 및 텍스트 보존 로직 | ✅ 완료 |
-| **10초 타임아웃 강제 중단** | PRD 5.4, 6.3 | [`lib/fetch-with-timeout.ts`](../lib/fetch-with-timeout.ts) 10초 초과 시 Abort 및 타임아웃 문구 | ✅ 완료 |
+| **25초 타임아웃 강제 중단** | PRD 5.4, 6.3 | [`lib/fetch-with-timeout.ts`](../lib/fetch-with-timeout.ts) 25초 초과 시 Abort 및 타임아웃 문구 | ✅ 완료 |
 | **AI 가드레일 안내** | PRD 5.5, 6.3 | [`components/guardrail-card.tsx`](../components/guardrail-card.tsx) `INVALID_INPUT` 가드레일 카드 노출 | ✅ 완료 |
 | **JSON 파싱 오류 복구** | PRD 5.6, 6.3 | 규격 오류 트래핑, 자동 1회 재요청 및 사용자 피드백 | ✅ 완료 |
 | **초경량 클라이언트 동작** | PRD 1.2, 6.4 | 로그인/DB 없이 브라우저 프론트엔드 환경 완벽 동작 | ✅ 완료 |

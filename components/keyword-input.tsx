@@ -53,6 +53,25 @@ export const KeywordInput: React.FC<KeywordInputProps> = ({
     }
   };
 
+  const LOADING_MESSAGES = [
+    '🧠 키워드의 결정적 연상 고리를 분석하는 중...',
+    '⚡ 뇌리에 박히는 기발한 3줄 스토리를 짜내는 중...',
+    '🎯 직관적인 1초 확인 퀴즈와 해설을 출제하는 중...',
+    '✨ 거의 다 되었어요! 짤기억 카드를 다듬는 중...',
+  ];
+  const [loadingMsgIndex, setLoadingMsgIndex] = React.useState(0);
+
+  useEffect(() => {
+    if (!loading) {
+      setLoadingMsgIndex(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setLoadingMsgIndex((prev) => (prev + 1) % LOADING_MESSAGES.length);
+    }, 2200);
+    return () => clearInterval(interval);
+  }, [loading]);
+
   const isButtonDisabled = isBlank || isMultiple || loading;
 
   return (
@@ -149,7 +168,7 @@ export const KeywordInput: React.FC<KeywordInputProps> = ({
         {loading ? (
           <>
             <LoaderCircle className="size-4 animate-spin" />
-            <span>뇌리에 박히는 암기 팁을 짜내는 중...</span>
+            <span className="transition-all duration-300">{LOADING_MESSAGES[loadingMsgIndex]}</span>
           </>
         ) : (
           <>

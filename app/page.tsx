@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Sparkles, Brain } from 'lucide-react';
+import { Sparkles, Brain, BookMarked } from 'lucide-react';
 import { MemPopContent, ErrorType, GenerateResponse } from '@/types/mem-pop';
 import { fetchWithTimeout, TimeoutError } from '@/lib/fetch-with-timeout';
 import { KeywordInput } from '@/components/keyword-input';
@@ -11,6 +11,9 @@ import { QuizCard } from '@/components/quiz-card';
 import { ActionButtons } from '@/components/action-buttons';
 import { GuardrailCard } from '@/components/guardrail-card';
 import { ErrorCard } from '@/components/error-card';
+import { SavedCardsDrawer } from '@/components/saved-cards-drawer';
+import { getSavedCards, removeCard } from '@/lib/storage';
+import { SavedMemPopCard } from '@/types/storage';
 
 export default function Page() {
   const [keyword, setKeyword] = useState('');
@@ -19,6 +22,16 @@ export default function Page() {
   const [content, setContent] = useState<MemPopContent | null>(null);
   const [selectedQuizOption, setSelectedQuizOption] = useState<number | null>(null);
   const [errorState, setErrorState] = useState<{ errorType: ErrorType; message: string } | null>(null);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [savedCards, setSavedCards] = useState<SavedMemPopCard[]>([]);
+
+  const refreshSavedCards = useCallback(() => {
+    setSavedCards(getSavedCards());
+  }, []);
+
+  useEffect(() => {
+    refreshSavedCards();
+  }, [refreshSavedCards]);
 
   const handleGenerate = useCallback(
     async (targetKeyword?: string) => {
@@ -48,14 +61,14 @@ export default function Page() {
 
       try {
         // PRD 5.3: 네트워크 오류 시 1회 자동 재시도
-        // PRD 5.4: 10초 타임아웃 Abort
+        // PRD 5.4: 25초 타임아웃 Abort (LLM 실시간 생성 시간 보장)
         const res = await fetchWithTimeout('/api/generate', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ keyword: activeKeyword }),
-          timeoutMs: 10000,
+          timeoutMs: 25000,
           maxRetries: 1,
           retryDelayMs: 1000,
         });
@@ -119,21 +132,45 @@ export default function Page() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleSuggestionSelect = (suggestion: string) => {
-    setKeyword(suggestion);
-    setEmptyTouched(false);
+  const handleSelectSavedCard = (savedCard: SavedMemPopCard) => {
+    setKeyword(savedCard.keyword);
+    setContent(savedCard.content);
+    setSelectedQuizOption(null);
     setErrorState(null);
-    handleGenerate(suggestion);
+    setEmptyTouched(false);
+  };
+
+  const handleDeleteSavedCard = (id: string) => {
+    removeCard(id);
+    refreshSavedCards();
   };
 
   return (
     <main className="min-h-screen bg-background px-4 py-8 text-foreground sm:py-14">
       <div className="mx-auto flex max-w-xl flex-col gap-7">
         {/* 상단 헤더 영역 */}
-        <header className="text-center">
-          <div className="mb-4 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
-            <Sparkles className="size-3.5" />
-            <span>AI 암기 튜터</span>
+        <header className="relative text-center">
+          {/* 우측 상단 내 암기장 열기 버튼 */}
+          <div className="mb-3 flex items-center justify-between">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/10 px-3.5 py-1 text-xs font-bold text-primary">
+              <Sparkles className="size-3.5" />
+              <span>AI 암기 튜터</span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => setIsDrawerOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-full border border-border bg-card/90 px-3.5 py-1.5 text-xs font-bold text-foreground shadow-xs transition-all hover:border-primary/50 hover:bg-primary/10 hover:text-primary active:scale-95"
+              aria-label="나만의 암기장 열기"
+            >
+              <BookMarked className="size-3.5 text-primary" />
+              <span>내 암기장</span>
+              {savedCards.length > 0 && (
+                <span className="flex size-4 items-center justify-center rounded-full bg-primary text-[10px] font-black text-primary-foreground">
+                  {savedCards.length}
+                </span>
+              )}
+            </button>
           </div>
 
           <h1 className="text-balance text-3xl font-black tracking-tight sm:text-4xl">
@@ -218,7 +255,7 @@ export default function Page() {
               className="flex flex-col gap-5"
             >
               {/* 배경 & 3줄 연상 암기 스토리 카드 */}
-              <StoryCard content={content} />
+              <StoryCard content={content} onSavedChange={refreshSavedCards} />
 
               {/* 3지선다 1초 확인 퀴즈 카드 */}
               <QuizCard
@@ -236,6 +273,15 @@ export default function Page() {
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* 나만의 암기장 서랍 모달 */}
+        <SavedCardsDrawer
+          isOpen={isDrawerOpen}
+          onClose={() => setIsDrawerOpen(false)}
+          savedCards={savedCards}
+          onSelectCard={handleSelectSavedCard}
+          onDeleteCard={handleDeleteSavedCard}
+        />
 
         {/* 푸터 영역 */}
         <footer className="pt-4 pb-6 text-center text-xs font-medium text-muted-foreground">

@@ -40,10 +40,10 @@ flowchart TD
     Start([생성하기 클릭]) --> ValCheck{입력 유효성 검사}
     ValCheck -- 빈 값/공백 --> ErrEmpty[버튼 비활성화 & 레드 보더 경고]
     ValCheck -- 다중 구분자 2개 이상 --> WarnMulti[다중 단어 경고 문구 노출]
-    ValCheck -- 유효한 키워드 --> Req1[1차 API 요청 전송<br/>10초 타임아웃 타이머 가동]
+    ValCheck -- 유효한 키워드 --> Req1[1차 API 요청 전송<br/>25초 타임아웃 타이머 가동]
     
-    Req1 --> TimeCheck{10초 초과 여부}
-    TimeCheck -- 10초 초과 --> AbortReq[AbortController 강제 중단 & 타임아웃 문구]
+    Req1 --> TimeCheck{25초 초과 여부}
+    TimeCheck -- 25초 초과 --> AbortReq[AbortController 강제 중단 & 타임아웃 문구]
     
     TimeCheck -- 정상 응답 수신 --> ResType{응답 타입 분기}
     ResType -- INVALID_INPUT --> ShowGuard[가드레일 안내 카드 노출]

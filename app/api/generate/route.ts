@@ -5,6 +5,59 @@ import {
   generateMemoryContent,
   parseAndValidateAIResponse,
 } from '@/lib/ai-service';
+import { SYSTEM_PROMPT, buildUserPrompt } from '@/lib/prompts';
+
+async function callGeminiAPI(keyword: string, apiKey: string): Promise<string> {
+  const models = ['gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-flash-latest'];
+  let lastError: any = null;
+
+  for (const model of models) {
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            contents: [
+              {
+                role: 'user',
+                parts: [{ text: buildUserPrompt(keyword) }],
+              },
+            ],
+            systemInstruction: {
+              parts: [{ text: SYSTEM_PROMPT }],
+            },
+            generationConfig: {
+              responseMimeType: 'application/json',
+              temperature: 0.7,
+            },
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        console.warn(`Gemini model ${model} failed (${response.status}):`, errorBody);
+        lastError = new Error(`Gemini API error: ${response.status}`);
+        continue;
+      }
+
+      const data = await response.json();
+      const generatedText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (generatedText) {
+        return generatedText;
+      }
+    } catch (err) {
+      console.warn(`Network error calling Gemini model ${model}:`, err);
+      lastError = err;
+    }
+  }
+
+  throw lastError || new Error('All Gemini models failed');
+}
 
 export async function POST(req: NextRequest): Promise<NextResponse<GenerateResponse>> {
   try {
@@ -24,49 +77,52 @@ export async function POST(req: NextRequest): Promise<NextResponse<GenerateRespo
       );
     }
 
-    // 2. 외부 LLM API 키 존재 여부 확인 (옵션 지원: GEMINI_API_KEY / OPENAI_API_KEY)
-    // 없을 경우 즉시 고품질 지능형 생성 엔진(Stand-alone)으로 응답
-    const apiKey = process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY;
+    const trimmedKeyword = keyword.trim();
+    const apiKey = process.env.GEMINI_API_KEY;
 
+    // 2. 외부 LLM API 키가 없는 경우 내장 엔진으로 Fallback 응답
     if (!apiKey) {
-      // 로컬/독립 실행 환경: 지능형 템플릿 엔진으로 즉시 생성 (5초 이내 요구사항 만족)
-      const data = generateMemoryContent(keyword.trim());
+      const data = generateMemoryContent(trimmedKeyword);
       return NextResponse.json({
         success: true,
         data,
       });
     }
 
-    // 3. LLM API 연동 (API 키가 제공된 경우)
-    // ... 향후 확장을 위한 구조 완비
-    const data = generateMemoryContent(keyword.trim());
-    return NextResponse.json({
-      success: true,
-      data,
-    });
+    // 3. Gemini API 호출
+    try {
+      const rawJson = await callGeminiAPI(trimmedKeyword, apiKey);
+      const data = parseAndValidateAIResponse(rawJson);
+      return NextResponse.json({
+        success: true,
+        data: {
+          ...data,
+          keyword: trimmedKeyword,
+        },
+      });
+    } catch (aiError: any) {
+      console.error('Gemini API call or parse error:', aiError);
+      if (aiError?.message === 'INVALID_INPUT') {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'INVALID_INPUT',
+            message: '올바른 단어 또는 개념을 입력해 주세요. (예: 역사적 사건, 영단어, 전문 용어)',
+          },
+          { status: 400 }
+        );
+      }
+
+      console.warn('Gemini API call failed, falling back to internal generator:', aiError?.message);
+      // AI 호출 실패 시 사용자 경험 보장을 위한 스마트 폴백 엔진 가동
+      const fallbackData = generateMemoryContent(trimmedKeyword);
+      return NextResponse.json({
+        success: true,
+        data: fallbackData,
+      });
+    }
   } catch (error: any) {
-    if (error?.message === 'INVALID_INPUT') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'INVALID_INPUT',
-          message: '올바른 단어 또는 개념을 입력해 주세요. (예: 역사적 사건, 영단어, 전문 용어)',
-        },
-        { status: 400 }
-      );
-    }
-
-    if (error?.message === 'PARSE_ERROR') {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'PARSE_ERROR',
-          message: '결과를 생성하는 중 형식이 맞지 않아 실패했습니다. 다시 생성하기를 눌러주세요.',
-        },
-        { status: 500 }
-      );
-    }
-
+    console.error('Global API route error:', error);
     return NextResponse.json(
       {
         success: false,
