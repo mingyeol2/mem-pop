@@ -15,7 +15,7 @@
 - 🛡️ **완벽한 예외 처리 & 회복 탄력성:**
   - 30자 입력 제한 및 다중 키워드 구분자 실시간 감지
   - 무의미한 외계어/오타 방지 **AI 가드레일(`INVALID_INPUT`)** 안내
-  - **25초 타임아웃** 강제 중단(`AbortController`) 및 다이내믹 4단계 AI 로딩 인터랙션
+  - **60초(1분) 타임아웃** 강제 중단(`AbortController`) 및 다이내믹 4단계 AI 로딩 인터랙션
   - 네트워크/서버 에러 발생 시 **1초 후 백그라운드 1회 자동 재시도(Auto-Retry)**
 
 ---
@@ -24,7 +24,7 @@
 
 - **Framework:** [Next.js 16 (App Router)](https://nextjs.org/)
 - **UI & Styling:** React 19, TypeScript, Tailwind CSS v4, Framer Motion, Lucide React
-- **LLM Integration:** Google Gemini 3.7 / 3.6 Flash API + Mock Fallback
+- **LLM Integration:** Google Gemini 3.5 / 3.7 Flash API (100% 실시간 생성)
 
 ---
 
@@ -35,12 +35,11 @@
 npm install
 ```
 
-### 2. 환경 변수 설정 (선택 사항)
-`.env` 파일 생성 후 LLM API 키 설정:
+### 2. 환경 변수 설정
+`.env` 파일 생성 후 Gemini API 키 설정:
 ```env
 GEMINI_API_KEY=your_gemini_api_key
 ```
-*(API 키가 설정되지 않은 경우, 테스트를 위한 내장 지능형 생성기가 자동으로 동작합니다.)*
 
 ### 3. 개발 서버 실행
 ```bash
