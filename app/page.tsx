@@ -90,13 +90,13 @@ export default function Page() {
             // JSON 파싱 예외 처리
             setErrorState({
               errorType: 'PARSE_ERROR',
-              message: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+              message: '생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
             });
           } else {
             // 서버 에러
             setErrorState({
               errorType: 'SERVER_ERROR',
-              message: json.message || '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+              message: json.message || '생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
             });
           }
           return;
@@ -115,7 +115,7 @@ export default function Page() {
           // 네트워크 오류 최종 실패
           setErrorState({
             errorType: 'NETWORK_ERROR',
-            message: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+            message: '생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
           });
         }
       } finally {

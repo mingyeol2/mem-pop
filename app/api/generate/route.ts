@@ -166,7 +166,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<GenerateRespo
         {
           success: false,
           error: aiError?.message === 'PARSE_ERROR' ? 'PARSE_ERROR' : 'SERVER_ERROR',
-          message: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+          message: '생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
         },
         { status: 500 }
       );
@@ -177,7 +177,7 @@ export async function POST(req: NextRequest): Promise<NextResponse<GenerateRespo
       {
         success: false,
         error: 'SERVER_ERROR',
-        message: '일시적인 오류가 발생했습니다. 잠시 후 다시 시도해 주세요.',
+        message: '생성에 실패했습니다. 잠시 후 다시 시도해 주세요.',
       },
       { status: 500 }
     );
