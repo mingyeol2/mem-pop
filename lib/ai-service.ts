@@ -1,3 +1,4 @@
+import { z } from 'zod';
 import { MemPopContent, ErrorType } from '@/types/mem-pop';
 
 // 다중 키워드 구분자 정규식 (PRD 5.2)
@@ -49,55 +50,62 @@ export function validateKeyword(keyword: string): { isValid: boolean; errorType?
   return { isValid: true };
 }
 
+// Zod 검증 스키마 정의 (PRD 4.2, 5.6)
+export const MemPopContentSchema = z.object({
+  keyword: z.string().optional(),
+  summary: z.string().optional(),
+  background: z.string().optional(),
+  story: z.array(z.string().min(1)).length(3),
+  quiz: z.object({
+    question: z.string().min(1),
+    options: z.array(z.string().min(1)).length(3),
+    answer_index: z.union([z.literal(0), z.literal(1), z.literal(2)]),
+    explanation: z.string().min(1),
+  }),
+  error: z.string().optional(),
+});
+
 /**
- * AI 응답 JSON 스키마 검증기 (PRD 4.2, 5.6)
- * 규격: summary, story (3줄), quiz (question, options 3개, answer_index 0~2, explanation)
+ * AI 응답 JSON 스키마 검증기 (Zod 기반 및 마크다운 안전 파싱)
  */
 export function parseAndValidateAIResponse(jsonString: string): MemPopContent {
-  let parsed: any;
+  let parsedRaw: unknown;
   try {
-    // 마크다운 코드 블록 제거 후 파싱
-    const cleanJson = jsonString.replace(/```json\s*|\s*```/g, '').trim();
-    parsed = JSON.parse(cleanJson);
-  } catch {
+    // 마크다운 코드 블록(```json ... ```) 안전 제거 및 JSON 파싱
+    const cleanJson = jsonString.replace(/```(?:json)?\s*([\s\S]*?)\s*```/gi, '$1').trim();
+    parsedRaw = JSON.parse(cleanJson);
+  } catch (parseError) {
+    console.error('JSON parse error from Gemini raw text:', parseError, jsonString);
     throw new Error('PARSE_ERROR');
   }
 
   // 가드레일 에러 확인 (PRD 5.5)
-  if (parsed.error === 'INVALID_INPUT') {
+  if (typeof parsedRaw === 'object' && parsedRaw !== null && (parsedRaw as any).error === 'INVALID_INPUT') {
     throw new Error('INVALID_INPUT');
   }
 
-  const summary = (parsed.summary || parsed.background || '').trim();
+  const parseResult = MemPopContentSchema.safeParse(parsedRaw);
+  if (!parseResult.success) {
+    console.error('Zod schema validation failed on AI response:', parseResult.error);
+    throw new Error('PARSE_ERROR');
+  }
 
-  // 필수 필드 및 규격 검증
-  if (
-    !parsed ||
-    typeof parsed !== 'object' ||
-    !summary ||
-    !Array.isArray(parsed.story) ||
-    parsed.story.length !== 3 ||
-    !parsed.quiz ||
-    typeof parsed.quiz.question !== 'string' ||
-    !Array.isArray(parsed.quiz.options) ||
-    parsed.quiz.options.length !== 3 ||
-    typeof parsed.quiz.answer_index !== 'number' ||
-    ![0, 1, 2].includes(parsed.quiz.answer_index) ||
-    typeof parsed.quiz.explanation !== 'string'
-  ) {
+  const data = parseResult.data;
+  const summaryText = (data.summary || data.background || '').trim();
+  if (!summaryText) {
     throw new Error('PARSE_ERROR');
   }
 
   return {
-    keyword: parsed.keyword || '',
-    summary,
-    background: summary, // 하위 호환
-    story: [String(parsed.story[0]), String(parsed.story[1]), String(parsed.story[2])],
+    keyword: data.keyword || '',
+    summary: summaryText,
+    background: summaryText,
+    story: [data.story[0], data.story[1], data.story[2]],
     quiz: {
-      question: parsed.quiz.question,
-      options: [String(parsed.quiz.options[0]), String(parsed.quiz.options[1]), String(parsed.quiz.options[2])],
-      answer_index: parsed.quiz.answer_index as 0 | 1 | 2,
-      explanation: parsed.quiz.explanation,
+      question: data.quiz.question,
+      options: [data.quiz.options[0], data.quiz.options[1], data.quiz.options[2]],
+      answer_index: data.quiz.answer_index,
+      explanation: data.quiz.explanation,
     },
   };
 }
