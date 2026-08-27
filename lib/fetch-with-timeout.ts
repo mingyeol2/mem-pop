@@ -1,7 +1,7 @@
 /**
  * 타임아웃 및 재시도 기능이 내장된 fetch 유틸리티
  * PRD 5.3 (네트워크 오류 시 1초 대기 후 1회 자동 재시도)
- * PRD 5.4 (25초 타임아웃 강제 Abort - LLM 심층 연상 생성 시간 지원)
+ * PRD 5.4 (60초(1분) 타임아웃 강제 Abort - LLM 심층 연상 생성 시간 지원)
  */
 
 export interface FetchOptions extends RequestInit {
@@ -22,7 +22,7 @@ export async function fetchWithTimeout(
   options: FetchOptions = {}
 ): Promise<Response> {
   const {
-    timeoutMs = 25000, // 25초 타임아웃 설정 (LLM 생성 시간 보장)
+    timeoutMs = 60000, // 60초(1분) 타임아웃 설정 (LLM 생성 시간 보장)
     maxRetries = 1,    // PRD 5.3: 자동 1회 재요청
     retryDelayMs = 1000, // PRD 5.3: 1초 대기
     ...fetchOptions

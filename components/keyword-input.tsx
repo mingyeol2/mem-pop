@@ -15,7 +15,7 @@ interface KeywordInputProps {
   isInvalidGuardrail?: boolean;
 }
 
-const SUGGESTIONS = ['임진왜란 1592', '미토콘드리아', 'mitigate'];
+const SUGGESTIONS = ['인플레이션', '피타고라스', '아포토시스', '광합성'];
 
 export const KeywordInput: React.FC<KeywordInputProps> = ({
   keyword,
@@ -98,7 +98,7 @@ export const KeywordInput: React.FC<KeywordInputProps> = ({
             onChange={(e) => onChange(e.target.value)}
             onBlur={onBlur}
             onKeyDown={handleKeyDown}
-            placeholder="외우고 싶은 단어, 개념, 연도를 1개만 입력하세요. 예: 임진왜란 1592, mitigate"
+            placeholder="외우고 싶은 단어, 개념, 연도 입력 (예: 인플레이션, 피타고라스, 아포토시스)"
             className="min-w-0 flex-1 bg-transparent py-3 text-sm font-bold text-[#1A1C1E] outline-none placeholder:text-[#1A1C1E]/40 sm:text-base"
             aria-label="외우고 싶은 단어, 개념, 연도 입력"
           />

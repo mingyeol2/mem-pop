@@ -63,14 +63,14 @@ export default function Page() {
 
       try {
         // PRD 5.3: 네트워크 오류 시 1회 자동 재시도
-        // PRD 5.4: 25초 타임아웃 Abort (LLM 실시간 생성 시간 보장)
+        // PRD 5.4: 60초(1분) 타임아웃 Abort (LLM 실시간 생성 시간 보장)
         const res = await fetchWithTimeout('/api/generate', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ keyword: activeKeyword }),
-          timeoutMs: 25000,
+          timeoutMs: 60000,
           maxRetries: 1,
           retryDelayMs: 1000,
         });

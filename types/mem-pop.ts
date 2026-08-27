@@ -12,7 +12,8 @@ export interface QuizData {
 
 export interface MemPopContent {
   keyword: string;
-  background: string; // 핵심 배경 및 개념 설명
+  summary: string; // 1~2줄 핵심 배경 및 개념 설명
+  background?: string; // 하위 호환용
   story: [string, string, string]; // 3줄 연상 암기 스토리 [상황 연결, 말장난/연상, 펀치라인]
   quiz: QuizData;
 }

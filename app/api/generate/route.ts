@@ -2,13 +2,20 @@ import { NextRequest, NextResponse } from 'next/server';
 import { GenerateRequest, GenerateResponse } from '@/types/mem-pop';
 import {
   validateKeyword,
-  generateMemoryContent,
   parseAndValidateAIResponse,
 } from '@/lib/ai-service';
 import { SYSTEM_PROMPT, buildUserPrompt } from '@/lib/prompts';
 
+export const maxDuration = 60;
+
 async function callGeminiAPI(keyword: string, apiKey: string): Promise<string> {
-  const models = ['gemini-3.7-flash', 'gemini-3.6-flash', 'gemini-flash-latest'];
+  const models = [
+    'gemini-3.5-flash-lite',
+    'gemini-3.5-flash',
+    'gemini-3.1-flash-lite',
+    'gemini-flash-lite-latest',
+    'gemini-3.7-flash',
+  ];
   let lastError: any = null;
 
   for (const model of models) {
@@ -80,16 +87,19 @@ export async function POST(req: NextRequest): Promise<NextResponse<GenerateRespo
     const trimmedKeyword = keyword.trim();
     const apiKey = process.env.GEMINI_API_KEY;
 
-    // 2. 외부 LLM API 키가 없는 경우 내장 엔진으로 Fallback 응답
     if (!apiKey) {
-      const data = generateMemoryContent(trimmedKeyword);
-      return NextResponse.json({
-        success: true,
-        data,
-      });
+      console.error('GEMINI_API_KEY is not configured in environment variables');
+      return NextResponse.json(
+        {
+          success: false,
+          error: 'SERVER_ERROR',
+          message: 'AI API 설정 오류입니다. 관리자에게 문의해 주세요.',
+        },
+        { status: 500 }
+      );
     }
 
-    // 3. Gemini API 호출
+    // 2. Gemini API 실시간 호출 (하드코딩 분기 없이 100% 실시간 생성)
     try {
       const rawJson = await callGeminiAPI(trimmedKeyword, apiKey);
       const data = parseAndValidateAIResponse(rawJson);
@@ -113,13 +123,14 @@ export async function POST(req: NextRequest): Promise<NextResponse<GenerateRespo
         );
       }
 
-      console.warn('Gemini API call failed, falling back to internal generator:', aiError?.message);
-      // AI 호출 실패 시 사용자 경험 보장을 위한 스마트 폴백 엔진 가동
-      const fallbackData = generateMemoryContent(trimmedKeyword);
-      return NextResponse.json({
-        success: true,
-        data: fallbackData,
-      });
+      return NextResponse.json(
+        {
+          success: false,
+          error: aiError?.message === 'PARSE_ERROR' ? 'PARSE_ERROR' : 'SERVER_ERROR',
+          message: '일시적인 오류로 인해 암기법 생성에 실패했습니다. 다시 시도해 주세요.',
+        },
+        { status: 500 }
+      );
     }
   } catch (error: any) {
     console.error('Global API route error:', error);

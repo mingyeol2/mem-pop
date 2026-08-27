@@ -91,7 +91,8 @@ export const StoryCard: React.FC<StoryCardProps> = ({ content, onSavedChange }) 
 
   const handleCopy = async () => {
     try {
-      const textToCopy = `[${content.keyword} 짤기억 암기법]\n\n📖 핵심 배경:\n${content.background}\n\n💡 3줄 연상 암기팁:\n1. ${content.story[0]}\n2. ${content.story[1]}\n3. ${content.story[2]}`;
+      const summaryText = content.summary || content.background || '';
+      const textToCopy = `[${content.keyword} 짤기억 암기법]\n\n📖 핵심 배경:\n${summaryText}\n\n💡 3줄 연상 암기팁:\n1. ${content.story[0]}\n2. ${content.story[1]}\n3. ${content.story[2]}`;
       await navigator.clipboard.writeText(textToCopy);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -111,7 +112,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({ content, onSavedChange }) 
           <span className="font-heading text-sm font-black text-[#1A1C1E]">핵심 배경 & 개념 이해</span>
         </div>
         <p className="text-sm font-bold leading-relaxed text-[#1A1C1E]/80 sm:text-base">
-          {content.background}
+          {content.summary || content.background}
         </p>
       </article>
 

@@ -8,7 +8,7 @@ interface GuardrailCardProps {
   onSuggestionClick: (suggestion: string) => void;
 }
 
-const EXAMPLE_KEYWORDS = ['임진왜란 1592', '미토콘드리아', 'mitigate', '베르누이 방정식'];
+const EXAMPLE_KEYWORDS = ['인플레이션', '피타고라스', '아포토시스', '임진왜란 1592'];
 
 export const GuardrailCard: React.FC<GuardrailCardProps> = ({
   message = '올바른 단어 또는 개념을 입력해 주세요. (예: 역사적 사건, 영단어, 전문 용어)',
